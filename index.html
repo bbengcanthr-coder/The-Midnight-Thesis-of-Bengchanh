@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bengchan Night Terror</title>
+    <style>
+        body {
+            background-color: #050505;
+            color: #b30000;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            text-shadow: 2px 2px 5px black;
+        }
+
+        #game-container {
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            border: 1px solid #333;
+            padding: 20px;
+            background: rgba(10, 0, 0, 0.9);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        }
+
+        .scary-text {
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
+        .btn {
+            background: transparent;
+            color: #eee;
+            border: 1px solid #b30000;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #b30000;
+            color: black;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        #glitch-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1 class="scary-text">มหาวิทยาลัยเบงจันทร์</h1>
+    <div id="scene-desc">คุณตื่นขึ้นมาในห้องสมุดเบงจันทร์ตอนตี 3... ไฟทั้งตึกดับสนิท มีเพียงแสงจันทร์ที่ลอดผ่านหน้าต่าง</div>
+    <div id="choices">
+        <button class="btn" onclick="nextScene('hallway')">เดินออกไปที่ทางเดิน</button>
+        <button class="btn" onclick="nextScene('desk')">หมอบลงใต้โต๊ะ</button>
+    </div>
+</div>
+
+<div id="glitch-overlay"></div>
+
+<script>
+    const scenes = {
+        'hallway': {
+            text: "ทางเดินมืดสนิท คุณได้กลิ่นธูปโชยมา... และเห็นเงาสูงยืนอยู่ที่หน้าห้องธุรการ",
+            options: [
+                { text: "วิ่งหนีไปทางบันไดหนีไฟ", next: 'stairs' },
+                { text: "เดินเข้าไปทัก (คุณอาจคิดว่าเป็นรปภ.)", next: 'death' }
+            ]
+        },
+        'desk': {
+            text: "คุณซ่อนตัวอยู่ใต้โต๊ะ... ทันใดนั้นมีเสียงกระซิบข้างหูว่า 'ยังไม่กลับอีกเหรอ?'",
+            options: [
+                { text: "กรีดร้อง", next: 'death' },
+                { text: "กลั้นหายใจและหลับตา", next: 'escape' }
+            ]
+        },
+        'death': {
+            text: "สายเกินไปแล้ว... สิ่งนั้นไม่ใช่คน หน้าของมันขาวโพลนไม่มีดวงตา เกมจบลงที่นี่",
+            options: [{ text: "เริ่มใหม่", next: 'start' }]
+        },
+        'escape': {
+            text: "เสียงเท้าค่อยๆ ห่างไป... คุณรวบรวมความกล้าวิ่งออกไปถึงประตูหน้ามหาวิทยาลัยได้สำเร็จ!",
+            options: [{ text: "เล่นอีกครั้ง", next: 'start' }]
+        }
+    };
+
+    function nextScene(sceneKey) {
+        if(sceneKey === 'start') location.reload();
+        
+        const scene = scenes[sceneKey];
+        document.getElementById('scene-desc').innerText = scene.text;
+        const choicesDiv = document.getElementById('choices');
+        choicesDiv.innerHTML = '';
+
+        scene.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.innerText = opt.text;
+            btn.onclick = () => {
+                if(sceneKey === 'hallway') triggerGlitch();
+                nextScene(opt.next);
+            };
+            choicesDiv.appendChild(btn);
+        });
+    }
+
+    function triggerGlitch() {
+        const overlay = document.getElementById('glitch-overlay');
+        overlay.style.display = 'block';
+        setTimeout(() => overlay.style.display = 'none', 200);
+    }
+</script>
+</body>
+</html>
